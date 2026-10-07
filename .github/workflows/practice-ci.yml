@@ -1,5 +1,3 @@
-mkdir -p .github/workflows
-cat > .github/workflows/practice-ci.yml << 'EOF'
 name: Practice CI/CD
 
 on:
@@ -146,4 +144,3 @@ jobs:
             sleep 20
             bash monitoring/check.sh http://localhost
             docker image prune -f
-EOF
