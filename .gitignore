@@ -6,3 +6,8 @@ venv/
 .pytest_cache/
 dist/
 *.db
+
+# any .env variant except the template
+.env.*
+!.env.example
+*.backup*
