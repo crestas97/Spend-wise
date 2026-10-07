@@ -1,3 +1,8 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 services:
   db:
     image: postgres:16
@@ -13,6 +18,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    logging: *default-logging
     restart: unless-stopped
 
   backend:
@@ -30,12 +36,19 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    logging: *default-logging
     restart: unless-stopped
 
   frontend:
     build: ./frontend
     image: ${DOCKERHUB_USERNAME:-local}/spendwise-practice-frontend:latest
+    logging: *default-logging
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
 
   nginx:
     image: nginx:alpine
@@ -48,7 +61,13 @@ services:
         condition: service_healthy
       frontend:
         condition: service_started
+    logging: *default-logging
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
 
 volumes:
   pgdata:

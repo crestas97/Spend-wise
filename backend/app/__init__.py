@@ -11,6 +11,7 @@ jwt = JWTManager()
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"pool_pre_ping": True}
     app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///dev.db")
     app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
@@ -22,6 +23,8 @@ def create_app(test_config=None):
     db.init_app(app)
     jwt.init_app(app)
 
+    from .observability import init_observability
+    init_observability(app)
     from . import models  # noqa: F401
     from .auth import bp as auth_bp
     from .expenses import bp as expenses_bp
