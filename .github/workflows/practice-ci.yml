@@ -2,9 +2,9 @@ name: Practice CI/CD
 
 on:
   push:
-    branches: [devops/build]
+    branches: [main]
   pull_request:
-    branches: [devops/build]
+    branches: [main]
 
 permissions:
   contents: read
